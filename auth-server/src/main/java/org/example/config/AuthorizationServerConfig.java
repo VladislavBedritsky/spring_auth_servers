@@ -38,7 +38,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .scopes("user_info")
                 .autoApprove(true)
                 .redirectUris(
-                        "http://localhost:8982/ui/login");
+                        "http://localhost:8982/ui/login","http://localhost:8080/login");
     }
 
 
