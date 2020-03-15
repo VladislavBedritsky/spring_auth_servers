@@ -21,10 +21,10 @@ import org.springframework.security.web.context.SecurityContextPersistenceFilter
 public class OAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private OAuth2ClientContextFilter oauth2ClientContextFilter;
+    private OAuth2ClientContextFilter oAuth2ClientContextFilter;
 
     @Autowired
-    private OAuth2ClientContext oauth2ClientContext;
+    private OAuth2ClientContext oAuth2ClientContext;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -36,7 +36,7 @@ public class OAuthConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .anyRequest()
                 .authenticated()
-        .and().addFilterAfter(oauth2ClientContextFilter, SecurityContextPersistenceFilter.class)
+        .and().addFilterAfter(oAuth2ClientContextFilter, SecurityContextPersistenceFilter.class)
         .addFilterAfter(filter(),OAuth2ClientContextFilter.class);
 
     }
@@ -52,17 +52,22 @@ public class OAuthConfig extends WebSecurityConfigurerAdapter {
         return resource;
     }
 
+    @Bean
+    public OAuth2RestTemplate oAuth2RestTemplate() {
+        OAuth2RestTemplate template = new OAuth2RestTemplate(resourceDetails(),oAuth2ClientContext);
 
-    private OAuth2ClientAuthenticationProcessingFilter filter() {
+        return template;
+    }
+
+    @Bean
+    public OAuth2ClientAuthenticationProcessingFilter filter() {
         //Creating the filter for "/google/login" url
         OAuth2ClientAuthenticationProcessingFilter oAuth2Filter = new OAuth2ClientAuthenticationProcessingFilter(
                 "/login");
 
         //Creating the rest template for getting connected with OAuth service.
         //The configuration parameters will inject while creating the bean.
-        OAuth2RestTemplate oAuth2RestTemplate = new OAuth2RestTemplate(resourceDetails(),
-                oauth2ClientContext);
-        oAuth2Filter.setRestTemplate(oAuth2RestTemplate);
+        oAuth2Filter.setRestTemplate(oAuth2RestTemplate());
 
         // Setting the token service. It will help for getting the token and
         // user details from the OAuth Service.
@@ -71,13 +76,5 @@ public class OAuthConfig extends WebSecurityConfigurerAdapter {
 
         return oAuth2Filter;
     }
-
-
-
-//    @Bean
-//    public OAuth2RestTemplate oauth2RestTemplate(OAuth2ClientContext oauth2ClientContext,
-//                                                 OAuth2ProtectedResourceDetails details) {
-//        return new OAuth2RestTemplate(details, oauth2ClientContext);
-//    }
 
 }
