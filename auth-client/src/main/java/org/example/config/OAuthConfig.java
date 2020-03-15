@@ -23,8 +23,6 @@ public class OAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private OAuth2ClientContextFilter oAuth2ClientContextFilter;
 
-    @Autowired
-    private OAuth2ClientContext oAuth2ClientContext;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -41,23 +39,8 @@ public class OAuthConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-    @Bean
-    public OAuth2ProtectedResourceDetails resourceDetails() {
-        AuthorizationCodeResourceDetails resource = new AuthorizationCodeResourceDetails();
-        resource.setClientId("ClientId");
-        resource.setClientSecret("secret");
-        resource.setAccessTokenUri("http://localhost:8981/auth/oauth/token");
-        resource.setUserAuthorizationUri("http://localhost:8981/auth/oauth/authorize");
 
-        return resource;
-    }
 
-    @Bean
-    public OAuth2RestTemplate oAuth2RestTemplate() {
-        OAuth2RestTemplate template = new OAuth2RestTemplate(resourceDetails(),oAuth2ClientContext);
-
-        return template;
-    }
 
     @Bean
     public OAuth2ClientAuthenticationProcessingFilter filter() {
