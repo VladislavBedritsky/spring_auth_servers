@@ -24,6 +24,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
         registry.addViewController("/index");
         registry.addViewController("/secure");
+
     }
 
     @Override
