@@ -41,11 +41,21 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
         auth
-//                .inMemoryAuthentication()
-//                .withUser("aa")
-//                .password(passwordEncoder().encode("aa"))
-//                .roles("USER");
-        .userDetailsService(userService)
+                .ldapAuthentication()
+                    .userDnPatterns("uid={0},ou=people")
+                    .userSearchBase("ou=people")
+                    .userSearchFilter("uid={0}")
+                    .groupSearchBase("ou=groups")
+                    .groupSearchFilter("member={0}")
+                .contextSource()
+                    .url("ldap://localhost:8389/dc=example,dc=org")
+                .and()
+                    .passwordCompare()
+                        .passwordEncoder(passwordEncoder())
+                        .passwordAttribute("userPassword");
+
+        auth
+                .userDetailsService(userService)
                 .passwordEncoder(passwordEncoder());
     }
 
